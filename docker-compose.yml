@@ -1,0 +1,24 @@
+version: '3'
+services:
+  mysql:
+     image: mysql:5.7
+     container_name: mysql
+     restart: always
+     volumes:
+       - ./mysql-dump:/docker-entrypoint-initdb.d
+     environment:
+       MYSQL_DATABASE: studentapp
+       MYSQL_USER: admin
+       MYSQL_ROOT_PASSWORD : root       
+         #MYSQL_PASSWORD: Admin$123
+     ports:
+       - 3306:3306
+  tomcat:
+    image: tomcat:8.5.85
+    container_name: tomcat
+    volumes:
+      - ./target/student.war:/usr/local/tomcat/webapps/student.war
+      - ./target/mysql-connector.jar:/usr/local/tomcat/lib/mysql-connector.jar
+    ports:
+      - '8082:8080'
+        #entrypoint: /bin/bash -c 'sed -i 20rdata.txt /usr/local/tomcat/conf/context.xml'
