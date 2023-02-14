@@ -1,24 +1,28 @@
-version: '3'
+version: '3.9'
 services:
-  mysql:
-     image: mysql:5.7
-     container_name: mysql
-     restart: always
-     volumes:
-       - ./mysql-dump:/docker-entrypoint-initdb.d
-     environment:
-       MYSQL_DATABASE: studentapp
-       MYSQL_USER: admin
-       MYSQL_ROOT_PASSWORD : root       
-         #MYSQL_PASSWORD: Admin$123
-     ports:
-       - 3306:3306
   tomcat:
-    image: tomcat:8.5.85
-    container_name: tomcat
+    image: tomcat:8.0.53-jre8
+    ports:
+      - "8080:8080"
     volumes:
       - ./target/student.war:/usr/local/tomcat/webapps/student.war
       - ./target/mysql-connector.jar:/usr/local/tomcat/lib/mysql-connector.jar
-    ports:
-      - '8082:8080'
-        #entrypoint: /bin/bash -c 'sed -i 20rdata.txt /usr/local/tomcat/conf/context.xml'
+    environment:
+      - DB_URL=jdbc:mysql://database-1.ccbjod0ijwud.us-east-1.rds.amazonaws.com:3306/studentapp
+      - DB_USER=admin
+      - DB_PASSWORD=Admin123
+    command: >
+      bash -c "head -n 20 /usr/local/tomcat/conf/context.xml > /tmp/context.xml && \
+      cat /data.txt >> /tmp/context.xml && \
+      tail -n +22 /usr/local/tomcat/conf/context.xml >> /tmp/context.xml && \
+      mv /tmp/context.xml /usr/local/tomcat/conf/context.xml && \
+      catalina.sh run"
+  db:
+    image: mysql:5.7
+    environment:
+      #- MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=studentapp
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=Admin123
+    volumes:
+      - ./mysql-dump/USER.sql:/docker-entrypoint-initdb.d/USER.sql

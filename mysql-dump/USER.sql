@@ -9,3 +9,5 @@ CREATE DATABASE studentapp;
         student_year_passed VARCHAR(10) NOT NULL,
         PRIMARY KEY (student_id)
     );
+    ALTER USER 'admin' IDENTIFIED WITH mysql_native_password BY 'Admin123'; 
+    flush privileges;
