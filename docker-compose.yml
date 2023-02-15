@@ -2,32 +2,11 @@ version: '3.8'
 
 services:
   tomcat:
-    image: tomcat:8.5
+    image: tomcat:8
     volumes:
       - ./target/student.war:/usr/local/tomcat/webapps/student.war
       - ./target/mysql-connector.jar:/usr/local/tomcat/lib/mysql-connector.jar
       - ./data.txt:/usr/local/tomcat/data.txt
     ports:
       - "8080:8080"
-    environment:
-      - CATALINA_OPTS=-Dspring.datasource.url=jdbc:mysql://database-2.ccbjod0ijwud.us-east-1.rds.amazonaws.com:3306/studentapp?useSSL=false&allowPublicKeyRetrieval=true
-    depends_on:
-      - db
-    command: sh -c "sed -i '21r /usr/local/tomcat/data.txt' /usr/local/tomcat/conf/context.xml"
-  db:
-    image: mysql:5.7
-    environment:
-      #MYSQL_RANDOM_ROOT_PASSWORD: yes
-      #MYSQL_ROOT_PASSWORD: example
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: Admin123
-      MYSQL_DATABASE: studentapp
-      MYSQL_HOST: database-2.ccbjod0ijwud.us-east-1.rds.amazonaws.com
-      MYSQL_PORT: 3306
-    volumes:
-      - ./mysql-dump/USER.sql:/docker-entrypoint-initdb.d/USER.sql
-    ports:
-      - "3306:3306"
-
-volumes:
-  db_data:
+    command: sh -c "cp /usr/local/tomcat/data.txt /tmp/data.txt && sed -i '21,24d' /usr/local/tomcat/conf/context.xml && sed -i '20r /tmp/data.txt' /usr/local/tomcat/conf/context.xml"
