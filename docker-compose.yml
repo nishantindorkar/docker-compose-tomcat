@@ -1,14 +1,19 @@
 version: '3.8'
+
 services:
   tomcat:
-    image: tomcat:8
+    image: tomcat:8.5
     volumes:
       - ./target/student.war:/usr/local/tomcat/webapps/student.war
       - ./target/mysql-connector.jar:/usr/local/tomcat/lib/mysql-connector.jar
       - ./data.txt:/usr/local/tomcat/data.txt
     ports:
       - "8080:8080"
-    command: sh -c "cp /usr/local/tomcat/data.txt /tmp/data.txt && sed -i '21,24d' /usr/local/tomcat/conf/context.xml && sed -i '20r /tmp/data.txt' /usr/local/tomcat/conf/context.xml"
+    environment:
+      - CATALINA_OPTS=-Dspring.datasource.url=jdbc:mysql://database-2.ccbjod0ijwud.us-east-1.rds.amazonaws.com:3306/studentapp?useSSL=false&allowPublicKeyRetrieval=true
+    depends_on:
+      - db
+    command: sh -c "cp /usr/local/tomcat/data.txt /tmp/data.txt && sed -i '21r /tmp/data.txt' /usr/local/tomcat/conf/context.xml && catalina.sh run"
   db:
     image: mysql:5.7
     environment:
@@ -22,6 +27,3 @@ services:
       - ./mysql-dump/USER.sql:/docker-entrypoint-initdb.d/USER.sql
     ports:
       - "3306:3306"
-
-volumes:
-  db_data:
