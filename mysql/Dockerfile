@@ -1,7 +1,10 @@
 FROM mysql:latest
+
 ENV MYSQL_ROOT_PASSWORD=Admin123
-COPY user.sql /user.sql
 ENV MYSQL_DATABASE=studentapp
+
+COPY user.sql /docker-entrypoint-initdb.d/user.sql
+
 
 RUN set -eux; \
     service mysql start; \
