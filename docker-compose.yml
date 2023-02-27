@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   tomcat:
@@ -11,8 +11,8 @@ services:
   db:
     build: ./mysql
     environment:
-      MYSQL_DATABASE: studentapp
       MYSQL_ROOT_PASSWORD: Admin123
+      MYSQL_DATABASE: studentapp
     volumes:
-      - ./mysql:/var/lib/mysql
-    command: ["/bin/bash", "-c", "systemctl start mysql && tail -f /dev/null"]
+      - ./mysql/data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
