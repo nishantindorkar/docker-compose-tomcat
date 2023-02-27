@@ -1,5 +1,4 @@
 version: "3.9"
-
 services:
   tomcat:
     build: ./tomcat
@@ -15,3 +14,4 @@ services:
       MYSQL_ROOT_PASSWORD: Admin123
     volumes:
       - ./mysql:/var/lib/mysql
+    command: ["/bin/bash", "-c", "service mysql start && tail -f /dev/null"]
