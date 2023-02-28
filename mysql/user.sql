@@ -12,6 +12,5 @@ CREATE TABLE IF NOT EXISTS students (
     PRIMARY KEY (student_id)
 );
 
-ALTER USER 'admin' IDENTIFIED WITH mysql_native_password BY 'Admin123'; 
-
+ALTER USER 'admin'@'%' IDENTIFIED WITH mysql_native_password BY 'Admin123';
 FLUSH PRIVILEGES;
