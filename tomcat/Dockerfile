@@ -1,16 +1,18 @@
-FROM tomcat:latest
+FROM ubuntu:latest
 
+RUN mkdir /opt/tomcat/
+
+WORKDIR /opt/tomcat
+RUN apt update -y && apt upgrade -y
+RUN apt-get -y install openjdk-8-jdk
+RUN apt install curl -y
+RUN curl -O https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.86/bin/apache-tomcat-8.5.86.tar.gz
+RUN tar xvfz apache*.tar.gz
+RUN mv apache-tomcat-8.5.86/* /opt/tomcat/.
+RUN java -version
+
+WORKDIR /opt/tomcat/webapps
+RUN curl -O -L https://s3-us-west-2.amazonaws.com/studentapi-cit/student.war
 EXPOSE 8080
 
-COPY ./student.war /usr/local/tomcat/webapps/student.war
-COPY ./mysql-connector.jar /usr/local/tomcat/lib/mysql-connector.jar
-COPY ./data.txt /usr/local/tomcat/
-
-ARG CONTEXT_LINE_NUMBER=21
-
-RUN echo "CONTEXT_LINE_NUMBER: ${CONTEXT_LINE_NUMBER}"
-RUN ls -l /usr/local/tomcat/
-RUN ls -l /usr/local/tomcat/conf/
-RUN cat /usr/local/tomcat/conf/context.xml
-RUN cat /usr/local/tomcat/data.txt
-RUN sed -i "${CONTEXT_LINE_NUMBER}r /usr/local/tomcat/data.txt" /usr/local/tomcat/conf/context.xml
+CMD ["/opt/tomcat/bin/catalina.sh", "run"]
